@@ -67,7 +67,7 @@ const filteredNotes = computed(() => {
         <h1 class="text-center font-kanit font-medium text-[26px] leading-[100%] text-[#252525]">TODO LIST</h1>
         <div class="flex items-center justify-between">
           <div class="py-2 px-4 rounded-[5px] border border-[#6C63FF] w-[79.3%] flex items-center justify-between">
-            <input type="text" placeholder="Search note" v-model="searchQuery" class="font-inter font-medium text-base leading-[100%] text-[#C3C1E5] placeholder-[#C3C1E5]" />
+            <input type="text" placeholder="Search note" v-model="searchQuery" class="font-inter font-medium text-base leading-[100%] text-[#C3C1E5] placeholder-[#C3C1E5] outline-0" />
             <img src="/search icon.png" alt="search icon" class="w-[21px] h-[21px]" />
           </div>
           <div class="p-[10px] rounded-[5px] bg-[#6C63FF]">
@@ -84,7 +84,7 @@ const filteredNotes = computed(() => {
       <div class="w-[69.3%] flex flex-col gap-5 mx-auto items-center">
         <template v-if="filteredNotes.length">
           <ul class="w-full space-y-2">
-            <li v-for="note in filteredNotes" :key="note.id" class="p-3 border rounded bg-white shadow">
+            <li v-for="note in filteredNotes" :key="note.id" class="p-3 border rounded bg-white flex items-center justify-between">
               <span>{{ note.title }}</span>
               <button class="text-red-500 font-bold" @click="deleteNote(note.id)">Delete</button>
             </li>
