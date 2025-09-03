@@ -33,8 +33,9 @@ async function submitNote() {
     });
 
     const data = await res.json();
+    const noteWithId = { ...data, id: Date.now() };
     console.log("Note created:", data);
-    notes.value.unshift(data);
+    notes.value.unshift(noteWithId);
     newNote.value = "";
     showModal.value = false;
   } catch (error) {
