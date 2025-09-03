@@ -3,12 +3,40 @@ import { ref } from "vue";
 
 const showModal = ref(false);
 
+const newNote = ref("");
+
 function OpenModal() {
   showModal.value = true;
 }
 
 function closeModal() {
   showModal.value = false;
+}
+
+async function submitNote() {
+  if (!newNote.value.trim()) {
+    alert("Please enter a note.");
+    return;
+  }
+
+  try {
+    const res = await fetch("https://jsonplaceholder.typicode.com/todos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: newNote.value,
+        completed: false,
+        userId: 1,
+      }),
+    });
+
+    const data = await res.json();
+    console.log("Note created:", data);
+    newNote.value = "";
+    showModal.value = false;
+  } catch (error) {
+    console.error("Error creating note:", error);
+  }
 }
 </script>
 
@@ -48,11 +76,12 @@ function closeModal() {
           <input
             type="text"
             placeholder="Input your note"
-            class="w-full py-2 px-4 border border-[#6C63FF] rounded-[5px] outline-0 font-kanit font-medium text-base leading-[100%] text-[#C3C1E5] placeholder-[#C3C1E5]" />
+            class="w-full py-2 px-4 border border-[#6C63FF] rounded-[5px] outline-0 font-kanit font-medium text-base leading-[100%] text-[#C3C1E5] placeholder-[#C3C1E5]"
+            v-model="newNote" />
         </div>
         <div class="flex items-center justify-between">
           <button class="py-[10px] px-[22px] border border-[#6C63FF] rounded-[5px] font-kanit font-medium text-lg leading-[100%] text-[#6C63FF]" @click="closeModal">Cancel</button>
-          <button class="py-[10px] px-[22px] bg-[#6C63FF] font-kanit font-medium text-lg leading-[100%] text-[#F7F7F7] rounded-[5px]">Apply</button>
+          <button class="py-[10px] px-[22px] bg-[#6C63FF] font-kanit font-medium text-lg leading-[100%] text-[#F7F7F7] rounded-[5px]" @click="submitNote">Apply</button>
         </div>
       </div>
     </div>
