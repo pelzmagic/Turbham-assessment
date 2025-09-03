@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 const showModal = ref(false);
 
 const newNote = ref("");
+const notes = ref<any[]>([]);
+const searchQuery = ref("");
 
 function OpenModal() {
   showModal.value = true;
@@ -32,12 +34,18 @@ async function submitNote() {
 
     const data = await res.json();
     console.log("Note created:", data);
+    notes.value.unshift(data);
     newNote.value = "";
     showModal.value = false;
   } catch (error) {
     console.error("Error creating note:", error);
   }
 }
+
+const filteredNotes = computed(() => {
+  if (!searchQuery.value.trim()) return notes.value;
+  return notes.value.filter((note) => note.title.toLowerCase().includes(searchQuery.value.toLowerCase()));
+});
 </script>
 
 <template>
@@ -47,7 +55,7 @@ async function submitNote() {
         <h1 class="text-center font-kanit font-medium text-[26px] leading-[100%] text-[#252525]">TODO LIST</h1>
         <div class="flex items-center justify-between">
           <div class="py-2 px-4 rounded-[5px] border border-[#6C63FF] w-[79.3%] flex items-center justify-between">
-            <input type="text" placeholder="Search note" class="font-inter font-medium text-base leading-[100%] text-[#C3C1E5] placeholder-[#C3C1E5]" />
+            <input type="text" placeholder="Search note" v-model="searchQuery" class="font-inter font-medium text-base leading-[100%] text-[#C3C1E5] placeholder-[#C3C1E5]" />
             <img src="/search icon.png" alt="search icon" class="w-[21px] h-[21px]" />
           </div>
           <div class="p-[10px] rounded-[5px] bg-[#6C63FF]">
@@ -62,8 +70,17 @@ async function submitNote() {
         </div>
       </div>
       <div class="w-[69.3%] flex flex-col gap-5 mx-auto items-center">
-        <img src="/detective.png" alt="detective icon" class="w-[221px] h-[174px]" />
-        <p class="font-kanit font-normal text-xl leading-[100%] text-[#252525]">Empty...</p>
+        <template v-if="filteredNotes.length">
+          <ul class="w-full space-y-2">
+            <li v-for="note in filteredNotes" :key="note.id" class="p-3 border rounded bg-white shadow">
+              {{ note.title }}
+            </li>
+          </ul>
+        </template>
+        <template v-else>
+          <img src="/detective.png" alt="detective icon" class="w-[221px] h-[174px]" />
+          <p class="font-kanit font-normal text-xl leading-[100%] text-[#252525]">Empty...</p>
+        </template>
       </div>
       <div class="w-[50px] h-[50px] absolute bottom-8 right-1" @click="OpenModal">
         <img src="/Add button.png" alt="add button" class="w-full h-full" />
