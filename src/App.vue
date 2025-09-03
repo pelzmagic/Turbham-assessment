@@ -42,6 +42,18 @@ async function submitNote() {
   }
 }
 
+async function deleteNote(id: number) {
+  try {
+    await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+      method: "DELETE",
+    });
+    notes.value = notes.value.filter((note) => note.id !== id);
+    console.log(`Note ${id} deleted`);
+  } catch (error) {
+    console.error("Error deleting note:", error);
+  }
+}
+
 const filteredNotes = computed(() => {
   if (!searchQuery.value.trim()) return notes.value;
   return notes.value.filter((note) => note.title.toLowerCase().includes(searchQuery.value.toLowerCase()));
@@ -73,7 +85,8 @@ const filteredNotes = computed(() => {
         <template v-if="filteredNotes.length">
           <ul class="w-full space-y-2">
             <li v-for="note in filteredNotes" :key="note.id" class="p-3 border rounded bg-white shadow">
-              {{ note.title }}
+              <span>{{ note.title }}</span>
+              <button class="text-red-500 font-bold" @click="deleteNote(note.id)">Delete</button>
             </li>
           </ul>
         </template>
